@@ -4,7 +4,7 @@ class Recently_viewed_upd {
 
     private $module_version = '1.1';
     private $module_name    = 'Recently_viewed';
-    private $module_table     = 'exp_recently_viewed';
+    private $module_table   = 'recently_viewed';
     private $cp_backend     = 'n';
     private $publish_fields = 'n';
 
@@ -30,7 +30,7 @@ class Recently_viewed_upd {
             'session_id' => array('type' => 'text', 'null' => true),
             'channel_id' => array('type' => 'int', 'constraint' => '10', 'unsigned' => true),
             'entry_id'   => array('type' => 'int', 'constraint' => '10', 'unsigned' => true),
-            'datetime'   => array('type' => 'timestamp', 'default' => 'CURRENT_TIMESTAMP')
+            'datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP'
         );
 
         $this->EE->dbforge->add_field($fields);
@@ -65,7 +65,7 @@ class Recently_viewed_upd {
         // run updates
         if ($query->num_rows() > 0 && $query->row('module_version') < $this->module_version) {
             
-            $old_table = $this->EE->db->dbprefix . "_recently_viewed_viewed";
+            $old_table = "recently_viewed_viewed";
             
             // Rename the recently_viewed_viewed table
             $this->EE->dbforge->rename_table($old_table, $this->module_table);

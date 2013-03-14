@@ -4,7 +4,7 @@ class Recently_viewed {
 
 	public $return_data;
 
-	private $module_table = 'exp_recently_viewed';
+	private $module_table = 'recently_viewed';
 	private $limit 		  = 5;
 	private $channel;
 	private $entry_id;
@@ -23,7 +23,7 @@ class Recently_viewed {
     public function add_entry() {
 		//get channel_id
     	$this->EE->db->select('channel_id');
-    	$query = $this->EE->db->get_where('exp_channels', array(
+    	$query = $this->EE->db->get_where('channels', array(
     		'channel_name' => $this->channel
     		)
     	);
@@ -77,7 +77,7 @@ class Recently_viewed {
 
 		//get channel_id
 		$this->EE->db->select('channel_id');
-		$query = $this->EE->db->get_where('exp_channels', array(
+		$query = $this->EE->db->get_where('channels', array(
 			'channel_name' => $channel
 			)
 		);
