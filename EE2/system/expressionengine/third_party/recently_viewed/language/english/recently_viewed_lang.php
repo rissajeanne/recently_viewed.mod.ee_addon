@@ -1,6 +1,6 @@
 <?php
 
-$L = array(
+$lang = array(
 
 //----------------------------------------
 // Required for MODULES page
