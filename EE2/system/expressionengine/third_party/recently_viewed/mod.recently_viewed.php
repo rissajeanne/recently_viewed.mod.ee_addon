@@ -6,9 +6,9 @@ class Recently_viewed {
 
 	private $module_table = 'exp_recently_viewed';
 	private $limit 		  = 5;
-	private $channel 	  = null;
-	private $entry_id 	  = null;
-	private $distinct 	  = null;
+	private $channel;
+	private $entry_id;
+	private $distinct;
 
     public function __construct() {
     	// Make a local reference to the ExpressionEngine super object
@@ -20,7 +20,7 @@ class Recently_viewed {
         $this->distinct = $this->EE->TMPL->fetch_param('distinct');
     }
 
-    function add_entry() {
+    public function add_entry() {
 		//get channel_id
     	$this->EE->db->select('channel_id');
     	$query = $this->EE->db->get_where('exp_channels', array(
@@ -67,10 +67,10 @@ class Recently_viewed {
 				$count++;
 			}
 		}
-		return;
+		return true;
     }
 
-    function get_entries() {
+    public function get_entries() {
 		//get parameters
 		$channel = $this->EE->TMPL->fetch_param('channel');
 		$distinct = $this->EE->TMPL->fetch_param('distinct');
@@ -85,14 +85,14 @@ class Recently_viewed {
 		$channel_id = $query->result[0]['channel_id'];
 
 		if (!is_numeric($channel_id) || empty($channel_id) || empty($channel)) {
-			return '1';
+			$output = '1';
 		}
 
 		if (isset($_COOKIE['recently_viewed_cookie'])) {
 			$session_id = $_COOKIE['recently_viewed_cookie'];
 		}
 		else {
-			return '1';
+			$output = '1';
 		}
 
 		//get entry ids
@@ -114,14 +114,15 @@ class Recently_viewed {
 			foreach ($result as $r) {
 				$q[] = $r['entry_id'];
 			}
-			return implode('|', $q);
+			$output = implode('|', $q);
 		}
 		else {
-			return '1';
+			$output = '1';
 		}
+		return $output;
     }
 
-    function set_cookie($name, $value = '', $expires=0, $path='', $domain='', $secure=false, $http_only=false) {
+    public function set_cookie($name, $value = '', $expires=0, $path='', $domain='', $secure=false, $http_only=false) {
 		 header('Set-Cookie: ' . rawurlencode($name) . '=' . rawurlencode($value)
 	         .(empty($expires) ? '' : '; expires=' . gmdate('D, d-M-Y H:i:s \\G\\M\\T', $expires))
 	         .(empty($path)    ? '' : '; path=' . $path)

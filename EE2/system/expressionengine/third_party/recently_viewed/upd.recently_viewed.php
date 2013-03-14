@@ -8,14 +8,14 @@ class Recently_viewed_upd {
     private $cp_backend     = 'n';
     private $publish_fields = 'n';
 
-    function __construct() {
+    public function __construct() {
         // Make a local reference to the ExpressionEngine super object
         $this->EE =& get_instance();
 
         $this->EE->load->dbforge();
     }
 
-    function install() {
+    public function install() {
         $module_data = array(
             'module_name'        => $this->module_name,
             'module_version'     => $this->module_version,
@@ -42,7 +42,7 @@ class Recently_viewed_upd {
         return true;
     }
 
-    function uninstall() {
+    public function uninstall() {
         $this->EE->db->select('module_id');
         $query = $this->EE->db->get_where('modules', array('module_name' => $this->module_name));
 
@@ -57,7 +57,7 @@ class Recently_viewed_upd {
         return true;
     }
 
-    function update($current = '') {
+    public function update($current = '') {
         // get current installed version module version
         $this->EE->db->select('module_version');
         $query = $this->EE->db->get_where('modules', array('module_name' => $this->module_name));
