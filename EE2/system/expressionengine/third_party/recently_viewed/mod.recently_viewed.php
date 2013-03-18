@@ -10,17 +10,17 @@ class Recently_viewed {
 	private $entry_id;
 	private $distinct;
 
-    public function __construct() {
-    	// Make a local reference to the ExpressionEngine super object
-        $this->EE =& get_instance();
+	public function __construct() {
+		// Make a local reference to the ExpressionEngine super object
+		$this->EE =& get_instance();
 
-        // Get tag parameters
-        $this->channel = $this->EE->TMPL->fetch_param('channel');
-        $this->entry_id = $this->EE->TMPL->fetch_param('entry_id');
-        $this->distinct = $this->EE->TMPL->fetch_param('distinct');
-    }
+		// Get tag parameters
+		$this->channel = $this->EE->TMPL->fetch_param('channel');
+		$this->entry_id = $this->EE->TMPL->fetch_param('entry_id');
+		$this->distinct = $this->EE->TMPL->fetch_param('distinct');
+	}
 
-    public function add_entry() {
+	public function add_entry() {
 		//get channel_id
 		$channel_id = $this->_get_channel_id();
 
@@ -63,9 +63,9 @@ class Recently_viewed {
 			}
 		}
 		return true;
-    }
+	}
 
-    public function get_entries() {
+	public function get_entries() {
 		//get channel_id
 		$channel_id = $this->_get_channel_id();
 
@@ -104,7 +104,7 @@ class Recently_viewed {
 		else {
 			return '1';
 		}
-    }
+	}
 
 	public function set_cookie($name, $value = '', $expires=0, $path='', $domain='', $secure=false, $http_only=false) {
 		header('Set-Cookie: ' . rawurlencode($name) . '=' . rawurlencode($value)
@@ -112,7 +112,7 @@ class Recently_viewed {
 		.(empty($path)    ? '' : '; path=' . $path)
 		.(empty($domain)  ? '' : '; domain=' . $domain)
 		.(!$secure        ? '' : '; secure')
-		.(!$http_only    ? '' : '; HttpOnly'), false);
+		.(!$http_only     ? '' : '; HttpOnly'), false);
 	}
 
 	private function _get_channel_id() {
