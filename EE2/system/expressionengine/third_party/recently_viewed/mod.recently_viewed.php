@@ -22,12 +22,7 @@ class Recently_viewed {
 
     public function add_entry() {
 		//get channel_id
-    	$this->EE->db->select('channel_id');
-    	$query = $this->EE->db->get_where('channels', array(
-    		'channel_name' => $this->channel
-    		)
-    	);
-		$channel_id = $query->result[0]['channel_id'];
+		$channel_id = $this->_get_channel_id();
 
 		//check to see if user has a cookie
 		if (isset($_COOKIE['recently_viewed_cookie'])) {
@@ -43,7 +38,7 @@ class Recently_viewed {
 		$insert_data = array(
 			'session_id' => $this->EE->db->escape_str($session_id),
 			'channel_id' => $this->EE->db->escape_str($channel_id),
-			'entry_id'	 => $this->EE->db->escape_str($entry_id)
+			'entry_id'	 => $this->EE->db->escape_str($this->entry_id)
 		);
 		$this->EE->db->insert($this->module_table, $insert_data);
 		
@@ -62,7 +57,7 @@ class Recently_viewed {
 			$result = $query->result();
 			foreach ($result as $r) {
 				if ($count > $this->limit) {
-					$this->EE->db->delete($this->module_table, array('view_id' => $r['view_id']));
+					$this->EE->db->delete($this->module_table, array('view_id' => $r->view_id));
 				}
 				$count++;
 			}
@@ -71,32 +66,22 @@ class Recently_viewed {
     }
 
     public function get_entries() {
-		//get parameters
-		$channel = $this->EE->TMPL->fetch_param('channel');
-		$distinct = $this->EE->TMPL->fetch_param('distinct');
-
 		//get channel_id
-		$this->EE->db->select('channel_id');
-		$query = $this->EE->db->get_where('channels', array(
-			'channel_name' => $channel
-			)
-		);
+		$channel_id = $this->_get_channel_id();
 
-		$channel_id = $query->result[0]['channel_id'];
-
-		if (!is_numeric($channel_id) || empty($channel_id) || empty($channel)) {
-			$output = '1';
+		if (!is_numeric($channel_id) || empty($channel_id) || empty($this->channel)) {
+			return '1';
 		}
 
 		if (isset($_COOKIE['recently_viewed_cookie'])) {
 			$session_id = $_COOKIE['recently_viewed_cookie'];
 		}
 		else {
-			$output = '1';
+			return '1';
 		}
 
 		//get entry ids
-		if ($distinct == 'on') {
+		if ($this->distinct == 'yes') {
 			$this->EE->db->distinct();
 		}
 		$this->EE->db->select('entry_id');
@@ -112,23 +97,39 @@ class Recently_viewed {
 			$result = $query->result();
 			$q = array();
 			foreach ($result as $r) {
-				$q[] = $r['entry_id'];
+				$q[] = $r->entry_id;
 			}
-			$output = implode('|', $q);
+			return implode('|', $q);
 		}
 		else {
-			$output = '1';
+			return '1';
 		}
-		return $output;
     }
 
-    public function set_cookie($name, $value = '', $expires=0, $path='', $domain='', $secure=false, $http_only=false) {
-		 header('Set-Cookie: ' . rawurlencode($name) . '=' . rawurlencode($value)
-	         .(empty($expires) ? '' : '; expires=' . gmdate('D, d-M-Y H:i:s \\G\\M\\T', $expires))
-	         .(empty($path)    ? '' : '; path=' . $path)
-	         .(empty($domain)  ? '' : '; domain=' . $domain)
-	         .(!$secure        ? '' : '; secure')
-	         .(!$http_only    ? '' : '; HttpOnly'), false);
+	public function set_cookie($name, $value = '', $expires=0, $path='', $domain='', $secure=false, $http_only=false) {
+		header('Set-Cookie: ' . rawurlencode($name) . '=' . rawurlencode($value)
+		.(empty($expires) ? '' : '; expires=' . gmdate('D, d-M-Y H:i:s \\G\\M\\T', $expires))
+		.(empty($path)    ? '' : '; path=' . $path)
+		.(empty($domain)  ? '' : '; domain=' . $domain)
+		.(!$secure        ? '' : '; secure')
+		.(!$http_only    ? '' : '; HttpOnly'), false);
+	}
+
+	private function _get_channel_id() {
+		$channel_id = "";
+
+		$this->EE->db->select('channel_id');
+		$query = $this->EE->db->get_where('channels', array(
+			'channel_name' => $this->channel
+			)
+		);
+
+		$result = $query->result();
+		if ($query->num_rows() > 0) {
+			$channel_id = $result[0]->channel_id;
+		}
+
+		return $channel_id;
 	}
 }
 
